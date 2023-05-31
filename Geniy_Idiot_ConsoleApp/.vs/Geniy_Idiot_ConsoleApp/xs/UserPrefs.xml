@@ -1,0 +1,23 @@
+﻿<Properties StartupConfiguration="{B33A5841-B93E-400A-AFF8-6F1657C1E131}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Geniy_Idiot_ConsoleApp/Program.cs">
+    <Files>
+      <File FileName="Geniy_Idiot_ConsoleApp/Program.cs" Line="20" Column="50" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Geniy_Idiot_ConsoleApp" expanded="True">
+            <Node name="Geniy_Idiot_ConsoleApp" expanded="True" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Geniy__Idiot__ConsoleApp PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+</Properties>

@@ -1,0 +1,15 @@
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/bin/Debug/net7.0/Geniy_Idiot_ConsoleApp
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/bin/Debug/net7.0/Geniy_Idiot_ConsoleApp.deps.json
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/bin/Debug/net7.0/Geniy_Idiot_ConsoleApp.runtimeconfig.json
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/bin/Debug/net7.0/Geniy_Idiot_ConsoleApp.dll
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/bin/Debug/net7.0/Geniy_Idiot_ConsoleApp.pdb
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.csproj.AssemblyReference.cache
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.GeneratedMSBuildEditorConfig.editorconfig
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.AssemblyInfoInputs.cache
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.AssemblyInfo.cs
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.csproj.CoreCompileInputs.cache
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.dll
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/refint/Geniy_Idiot_ConsoleApp.dll
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.pdb
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.genruntimeconfig.cache
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/ref/Geniy_Idiot_ConsoleApp.dll
