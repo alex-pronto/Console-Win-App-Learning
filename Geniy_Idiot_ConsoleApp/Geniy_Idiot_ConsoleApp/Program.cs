@@ -36,7 +36,7 @@ internal class Program
 
             Console.WriteLine("Напишите Ваше Имя");
             string name = Console.ReadLine();
-            //xcexwexwxxsxswxwdxsx
+            
 
             for (int i = 0; i < countQuestions; i++)
             {
@@ -47,7 +47,7 @@ internal class Program
                 Console.WriteLine(randomQuestions[i]);
 
 
-                int userAnswer = Convert.ToInt32(Console.ReadLine());
+                    int userAnswer = Convert.ToInt32(Console.ReadLine());
                 int rightAnswer = randomAnswers[i];
 
                 if (userAnswer == rightAnswer)
