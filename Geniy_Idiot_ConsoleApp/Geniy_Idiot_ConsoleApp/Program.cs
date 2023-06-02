@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using static System.Net.Mime.MediaTypeNames;
 
 internal class Program
@@ -41,13 +42,12 @@ internal class Program
             for (int i = 0; i < countQuestions; i++)
             {
 
+                int userAnswer = 0;
 
 
-                Console.WriteLine("Вопрос # " + (i + 1));
-                Console.WriteLine(randomQuestions[i]);
-
-
-                    int userAnswer = Convert.ToInt32(Console.ReadLine());
+                userAnswer = CheckUserAnswer(randomQuestions, i, userAnswer);
+                    
+               
                 int rightAnswer = randomAnswers[i];
 
                 if (userAnswer == rightAnswer)
@@ -69,11 +69,40 @@ internal class Program
             {
                 break;
             }
-
         }
-
-
     }
+
+
+
+
+    static int CheckUserAnswer(string[] randomQuestions, int i, int userAnswer)
+    {
+        bool checkAnswer = false;
+
+        while (checkAnswer == false)
+        {
+            
+            try
+            {
+                checkAnswer = true;
+                Console.WriteLine();
+                Console.WriteLine("Вопрос # " + (i + 1));
+                Console.WriteLine(randomQuestions[i]);
+                userAnswer = Convert.ToInt32(Console.ReadLine());
+                
+            }
+
+            catch
+            {
+                Console.WriteLine("ВВЕДИТЕ ЧИСЛО!");
+                Console.WriteLine();
+                checkAnswer = false;
+                
+            }
+        }
+        return (userAnswer);
+    }
+        
 
     static bool GetUserChoise(string message)
     {
