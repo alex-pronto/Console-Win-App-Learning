@@ -12,7 +12,7 @@ internal class Program
 
         while (true)
         {
-            int countQuestions = 5;
+            var countQuestions = 7;
 
             int[] arrayCountQuestions = GetArrayCountQuestions(countQuestions);
 
@@ -21,12 +21,7 @@ internal class Program
             int[] answers = GetAnswers(countQuestions);
 
             int countRightAnswers = 0;
-
-            string[] diagnoses = GetDiagnoses(countRightAnswers);
-
-
-
-
+            
             arrayCountQuestions = RandomizeNumbers(countQuestions, arrayCountQuestions);
 
             string[] randomQuestions = RandomizeQuestions(questions, arrayCountQuestions, countQuestions);
@@ -57,8 +52,11 @@ internal class Program
             }
 
 
-            Console.WriteLine(name + ", Ваш диагноз - " + diagnoses[countRightAnswers]);
+            string finalDiagnose = CalculateDiagnose(countQuestions, countRightAnswers);
 
+            //продумать расчет если будет вопросов меньше чем диагнозов (по модулю надло брать)
+
+            Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
 
             string messageToUser = "Если желаете повторить - нажмите - ДА или НЕТ, если хотите выйти";
 
@@ -176,6 +174,8 @@ internal class Program
         questions[2] = "На двух руках 10 пальцев  (Сколько пальцев на 5 руках?)";
         questions[3] = "Укол делают каждые пол часа  Сколько нужно минут для 3 уколов?";
         questions[4] = "Пять свечей сгорело  Две потухли  Сколько свечей осталось?";
+        questions[5] = "Два умножить на два?";
+        questions[6] = "Три умножить на три?";
 
         return (questions);
     }
@@ -188,20 +188,71 @@ internal class Program
         answers[2] = 25;
         answers[3] = 60;
         answers[4] = 2;
+        answers[5] = 4;
+        answers[6] = 9;
         return (answers);
     }
 
 
-    static string[] GetDiagnoses(int countRightAnswers)
+    
+
+    static string CalculateDiagnose( double countQuestions, int countRightAnswers)
     {
-        string[] diagnoses = new string[6];
+
+        var numbersOfDiagnoses = 6;
+
+        string[] diagnoses = new string[numbersOfDiagnoses];
         diagnoses[0] = "Идиот";
         diagnoses[1] = "Кретин";
         diagnoses[2] = "Дурак";
         diagnoses[3] = "Нормальный";
         diagnoses[4] = "Талант";
         diagnoses[5] = "Гений";
-        return (diagnoses);
+
+        string finalDiagnose ="";
+
+        var scaleOfDiagnose = countQuestions / (numbersOfDiagnoses - 1);
+
+        if (countRightAnswers >= 0 && countRightAnswers < scaleOfDiagnose)
+        {
+            finalDiagnose = diagnoses[0]; 
+        }
+        else if (countRightAnswers >= scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 2)
+
+        {
+            finalDiagnose = diagnoses[1]; 
+
+        }
+        else if (countRightAnswers >= 2*scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 3)
+
+        {
+            finalDiagnose = diagnoses[2]; 
+
+        }
+        else if (countRightAnswers >= 3 * scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 4)
+
+        {
+            finalDiagnose = diagnoses[3]; 
+
+        }
+        else if (countRightAnswers >= 4 * scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 5)
+
+        {
+            finalDiagnose = diagnoses[4]; 
+
+        }
+        else if (countRightAnswers >= 5 * scaleOfDiagnose && countRightAnswers <= scaleOfDiagnose * 6)
+
+        {
+            finalDiagnose = diagnoses[5];
+
+        }
+
+
+
+        return (finalDiagnose);
+
+        
 
     }
 
