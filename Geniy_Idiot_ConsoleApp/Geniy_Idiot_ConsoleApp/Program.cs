@@ -54,8 +54,6 @@ internal class Program
 
             string finalDiagnose = CalculateDiagnose(countQuestions, countRightAnswers);
 
-            //продумать расчет если будет вопросов меньше чем диагнозов (по модулю надло брать)
-
             Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
 
             string messageToUser = "Если желаете повторить - нажмите - ДА или НЕТ, если хотите выйти";
@@ -162,8 +160,6 @@ internal class Program
         }
         return (arrayCountQuestions);
     }
-
-
 
 
     static string[] GetQuestions(int countQuestions)
