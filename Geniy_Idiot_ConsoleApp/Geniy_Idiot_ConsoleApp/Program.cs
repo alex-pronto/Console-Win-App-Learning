@@ -27,7 +27,7 @@ namespace Readwriteusertofile
             while (isWork)
             {
 
-            string allCommands = "--------------\n0 - вывести всех\n1 - Добавить нового\n2 - удалить\n3 - выход\n--------------";
+            string allCommands = "--------------\n0 - вывести всех\n1 - Добавить нового\n2 - удалить\n3 - выход\n4 --------------";
             Console.WriteLine(allCommands);
             string inputCommandStr = Console.ReadLine();
 
@@ -84,7 +84,7 @@ namespace Readwriteusertofile
 
                  default:
                     {
-                            Console.WriteLine("Нет такой команды");
+                            Console.WriteLine("НЕТ такой команды");
                             break;
                     }
             }
