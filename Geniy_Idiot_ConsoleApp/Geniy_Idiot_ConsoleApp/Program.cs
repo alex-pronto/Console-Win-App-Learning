@@ -1,19 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Text;
 using Newtonsoft.Json;
+using ConsoleTables;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace Readwriteusertofile
+
 {
+
+
     class Program
     {
         static string DBFilePAth { get; set; }
+
+        public static DataTable InitEmployee()
+        {
+
+            var table = new DataTable();
+            table.Columns.Add("id", typeof(int));
+            table.Columns.Add("name", typeof(string));
+            table.Columns.Add("surname", typeof(string));
+            table.Columns.Add("Diagnose", typeof(string));
+
+            var allUsers = ReadAllFromDB();
+
+           
+            foreach (var user in allUsers)
+
+            table.Rows.Add(user.Id, user.Name, user.Surname);
+            
+            return table;
+        }
 
         static void Main(string[] args)
         {
             string fileDBName = "users_geniyidiot_game";
             string fileFolderPath = Path.GetTempPath();
             DBFilePAth = fileFolderPath + fileDBName;
-
-            
 
             if (File.Exists(DBFilePAth) == false)
             {
@@ -37,9 +67,29 @@ namespace Readwriteusertofile
             {
                 case 0:
                     {
-                        var allUsers = ReadAllFromDB();
-                        if (allUsers.Count == 0) Console.WriteLine("пока никого нет");
-                        foreach (var user in allUsers) Console.WriteLine(user);
+                         var allUsers = ReadAllFromDB();
+                         if (allUsers.Count == 0) Console.WriteLine("пока никого нет");
+
+
+                         Console.OutputEncoding = Encoding.UTF8;
+                         var data = InitEmployee();
+                         string[] columnNames = data.Columns.Cast<DataColumn>()
+                                                 .Select(x => x.ColumnName)
+                                                 .ToArray();
+
+                         DataRow[] rows = data.Select();
+
+                         var table = new ConsoleTable(columnNames);
+                         foreach (DataRow row in rows)
+                          {
+                             table.AddRow(row.ItemArray);
+                          }
+                            
+                            table.Write(Format.Alternative);
+                            
+                            Console.Read();
+
+                       
                         break;
 
                     }
