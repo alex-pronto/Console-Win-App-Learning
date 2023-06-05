@@ -5,11 +5,33 @@ using static System.Net.Mime.MediaTypeNames;
 
 internal class Program
 {
-    
 
+    static string DBFilePAth { get; set; }
+
+   
     private static void Main(string[] args)
     {
+        string fileDBName = "users_geniyidiot_game";
+        string fileFolderPath = Path.GetTempPath();
+        DBFilePAth = fileFolderPath + fileDBName;
 
+
+
+        if (File.Exists(DBFilePAth) == false)
+        {
+            var file = File.Create(DBFilePAth);
+            file.Close();
+        }
+
+
+       
+            string allCommands = "--------------\n0 - вывести результаты всех\n1 - новая игра \n2 - удалить пользователя \n3 - выход\n --------------";
+            Console.WriteLine(allCommands);
+            string inputCommandStr = Console.ReadLine();
+
+           // int inputCommand = GetIntFromString(inputCommandStr);
+
+           
         while (true)
         {
             var countQuestions = 7;
@@ -30,9 +52,17 @@ internal class Program
 
 
 
-            Console.WriteLine("Напишите Ваше Имя");
+            Console.WriteLine("Введите Имя");
             string name = Console.ReadLine();
-            
+
+
+            Console.WriteLine("Введите фамилию");
+            string surname = Console.ReadLine();
+
+            User newUser = new User(0, name, surname);
+            SaveToDB(newUser);
+            Console.WriteLine("успешно");
+
 
             for (int i = 0; i < countQuestions; i++)
             {
