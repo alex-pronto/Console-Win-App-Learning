@@ -3,6 +3,13 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using static System.Net.Mime.MediaTypeNames;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ConsoleTables;
 
 
 class User // класс Юзер
@@ -65,29 +72,11 @@ internal class Program
            
         while (isWork)
         {
-            var countQuestions = 7;
-
-            int[] arrayCountQuestions = GetArrayCountQuestions(countQuestions);
-
-            string[] questions = GetQuestions(countQuestions);
-
-            int[] answers = GetAnswers(countQuestions);
-
-            int countRightAnswers = 0;
             
-            arrayCountQuestions = RandomizeNumbers(countQuestions, arrayCountQuestions);
-
-            string[] randomQuestions = RandomizeQuestions(questions, arrayCountQuestions, countQuestions);
-
-            int[] randomAnswers = RandomizeAnswers(answers, arrayCountQuestions, countQuestions);
 
 
-            string allCommands = "--------------\n0 - вывести результаты всех\n1 - новая игра \n2 - выход\n --------------";
-            Console.WriteLine(allCommands);
+            int inputCommand = GetMenu();
 
-            string inputCommandStr = Console.ReadLine();
-
-            int inputCommand = GetIntFromString(inputCommandStr);
 
             switch (inputCommand)
             {
@@ -95,22 +84,58 @@ internal class Program
                     {
                         var allUsers = ReadAllFromDB();
                         if (allUsers.Count == 0) Console.WriteLine("пока никого нет");
-                        Console.WriteLine("    #  " + "    Имя             " + "      Результат");
-                        foreach (var user in allUsers) Console.WriteLine("| {0, -40} |", user);
-                        break;
 
+
+                        Console.OutputEncoding = Encoding.UTF8;
+                        var data = InitUser();
+                        string[] columnNames = data.Columns.Cast<DataColumn>()
+                                                .Select(x => x.ColumnName)
+                                                .ToArray();
+
+                        DataRow[] rows = data.Select();
+
+                        
+                        var table = new ConsoleTable(columnNames);
+
+                        
+
+                        foreach (DataRow row in rows)
+                        {
+                            table.AddRow(row.ItemArray);
+                        }
+
+                        table.Write(Format.Alternative);
+
+                        
+
+
+                        break;
                     }
                 case 1:
                     {
+                        var countQuestions = 7;
+
+                        int[] arrayCountQuestions = GetArrayCountQuestions(countQuestions);
+
+                        string[] questions = GetQuestions(countQuestions);
+
+                        int[] answers = GetAnswers(countQuestions);
+
+                        int countRightAnswers = 0;
+
+                        arrayCountQuestions = RandomizeNumbers(countQuestions, arrayCountQuestions);
+
+                        string[] randomQuestions = RandomizeQuestions(questions, arrayCountQuestions, countQuestions);
+
+                        int[] randomAnswers = RandomizeAnswers(answers, arrayCountQuestions, countQuestions);
+
                         Console.WriteLine("Введите Имя");
                         string name = Console.ReadLine();
 
 
                         Console.WriteLine("Введите фамилию");
                         string surname = Console.ReadLine();
-
-                        Console.WriteLine("успешно");
-
+                        
 
                         for (int i = 0; i < countQuestions; i++)
                         {
@@ -137,17 +162,10 @@ internal class Program
                         
                         SaveToDB(newUser);
 
+                        Console.WriteLine("----------------------------");
                         Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
 
-                        string messageToUser = "Если желаете повторить - нажмите - ДА или НЕТ, если хотите выйти";
 
-
-                        isWork = GetUserChoise(messageToUser);
-
-                        if (isWork == false)
-                        {
-                            break;
-                        }
                         break;
                     }
 
@@ -155,10 +173,16 @@ internal class Program
 
                 case 2:
                     {
+
+                        ClearDB();
+                        break;
+
+                    }
+                case 3:
+                    {
                         isWork = false;
                         Console.WriteLine("пока");
                         break;
-
                     }
 
                 default:
@@ -174,23 +198,68 @@ internal class Program
     }
 
 
-    static int GetIntFromString(string inputStr)
+    static int GetMenu()
     {
+        bool checkAnswer = false;
         int input = 0;
-
-        try
+        while (checkAnswer == false)
         {
-            input = int.Parse(inputStr);
+            string allCommands = "----------------------------\n0 - вывести результаты всех\n1 - новая игра \n2 - очистить предыдущие результаты\n3 - выход  \n ----------------------------";
+            Console.WriteLine(allCommands);
+            
+            try
+            {
+                checkAnswer = true;
+                 input = int.Parse(Console.ReadLine());
+
+            }
+
+            catch (FormatException)
+            {
+                Console.WriteLine("Нет Такой команды");
+                checkAnswer = false;
+                
+            }
         }
 
-        catch (FormatException)
-        {
-            Console.WriteLine("Нет Такой команды");
-        }
-        return input;
+        return (input);
+
+    }
+
+   
+
+    public static DataTable InitUser()
+    {
+
+        var table = new DataTable();
+
+
+
+        table.Columns.Add("Id", typeof(int));
+        table.Columns.Add("Name", typeof(string));
+        table.Columns.Add("Surname", typeof(string));
+        table.Columns.Add("Diagnose", typeof(string));
+
+        var allUsers = ReadAllFromDB();
+
+
+        foreach (var user in allUsers)
+
+            table.Rows.Add(user.Id, user.Name, user.Surname, user.Diagnose);
+
+        return table;
     }
 
 
+    static void ClearDB()
+    {
+        
+        File.WriteAllText(DBFilePAth, "");
+        Console.WriteLine("Готово");
+
+    }
+
+    
 
 
     static void SaveToDB(User user)
@@ -255,28 +324,7 @@ internal class Program
     }
 
 
-    static bool GetUserChoise(string message)
-    {
-
-        while (true)
-        {
-            Console.WriteLine(message);
-            string userInput = Console.ReadLine();
-
-            if (userInput.ToLower() == "да")
-            {
-                return (true);
-            }
-
-            if (userInput.ToLower() == "нет")
-            {
-                return (false);
-            }
-        }
-
-
-    }
-
+    
 
     static int[] GetArrayCountQuestions(int countQuestions)
     {
