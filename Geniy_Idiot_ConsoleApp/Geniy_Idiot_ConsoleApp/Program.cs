@@ -17,13 +17,15 @@ class User // класс Юзер
     public string Name { get; private set; } // свойства класса 
     public string Surname { get; private set; }
     public int Id { get; private set; }
+    public int CountRightAnswers { get; private set; }
     public string Diagnose { get; private set; }
 
-    public User(int id, string name, string surname, string diagnose) // конструктор который принимает свойства
+    public User(int id, string name, string surname,int countRightAnswers, string diagnose) // конструктор который принимает свойства
     {
         Id = id;
         Name = name;
         Surname = surname;
+        CountRightAnswers = countRightAnswers;
         Diagnose = diagnose;
 
     }
@@ -38,7 +40,7 @@ class User // класс Юзер
 
     public override string ToString()
     {
-        return $"| {Id} | {Name} {Surname}  {Diagnose}";
+        return $"| {Id} | {Name} {Surname} {CountRightAnswers} {Diagnose}";
     }
 
 
@@ -107,8 +109,6 @@ internal class Program
                         table.Write(Format.Alternative);
 
                         
-
-
                         break;
                     }
                 case 1:
@@ -158,7 +158,7 @@ internal class Program
                         string finalDiagnose = CalculateDiagnose(countQuestions, countRightAnswers);
 
                        
-                        User newUser = new User(0, name, surname, finalDiagnose);
+                        User newUser = new User(0, name, surname, countRightAnswers, finalDiagnose);
                         
                         SaveToDB(newUser);
 
@@ -238,6 +238,7 @@ internal class Program
         table.Columns.Add("Id", typeof(int));
         table.Columns.Add("Name", typeof(string));
         table.Columns.Add("Surname", typeof(string));
+        table.Columns.Add("Right Answers", typeof(int));
         table.Columns.Add("Diagnose", typeof(string));
 
         var allUsers = ReadAllFromDB();
@@ -245,7 +246,7 @@ internal class Program
 
         foreach (var user in allUsers)
 
-            table.Rows.Add(user.Id, user.Name, user.Surname, user.Diagnose);
+            table.Rows.Add(user.Id, user.Name, user.Surname, user.CountRightAnswers, user.Diagnose);
 
         return table;
     }
