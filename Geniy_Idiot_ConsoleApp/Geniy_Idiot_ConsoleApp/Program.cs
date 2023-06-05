@@ -10,12 +10,14 @@ class User // класс Юзер
     public string Name { get; private set; } // свойства класса 
     public string Surname { get; private set; }
     public int Id { get; private set; }
+    public string Diagnose { get; private set; }
 
-    public User(int id, string name, string surname) // конструктор который принимает свойства
+    public User(int id, string name, string surname, string diagnose) // конструктор который принимает свойства
     {
         Id = id;
         Name = name;
         Surname = surname;
+        Diagnose = diagnose;
 
     }
 
@@ -29,7 +31,7 @@ class User // класс Юзер
 
     public override string ToString()
     {
-        return $"{Id} {Name} {Surname}";
+        return $"| {Id} | {Name} {Surname}  {Diagnose}";
     }
 
 
@@ -58,15 +60,10 @@ internal class Program
         }
 
 
-       
-            string allCommands = "--------------\n0 - вывести результаты всех\n1 - новая игра \n2 - удалить пользователя \n3 - выход\n --------------";
-            Console.WriteLine(allCommands);
-            string inputCommandStr = Console.ReadLine();
 
-           // int inputCommand = GetIntFromString(inputCommandStr);
-
+        bool isWork = true;
            
-        while (true)
+        while (isWork)
         {
             var countQuestions = 7;
 
@@ -85,61 +82,122 @@ internal class Program
             int[] randomAnswers = RandomizeAnswers(answers, arrayCountQuestions, countQuestions);
 
 
+            string allCommands = "--------------\n0 - вывести результаты всех\n1 - новая игра \n2 - выход\n --------------";
+            Console.WriteLine(allCommands);
 
-            Console.WriteLine("Введите Имя");
-            string name = Console.ReadLine();
+            string inputCommandStr = Console.ReadLine();
 
+            int inputCommand = GetIntFromString(inputCommandStr);
 
-            Console.WriteLine("Введите фамилию");
-            string surname = Console.ReadLine();
-
-            User newUser = new User(0, name, surname);
-            SaveToDB(newUser);
-            Console.WriteLine("успешно");
-
-
-            for (int i = 0; i < countQuestions; i++)
+            switch (inputCommand)
             {
+                case 0:
+                    {
+                        var allUsers = ReadAllFromDB();
+                        if (allUsers.Count == 0) Console.WriteLine("пока никого нет");
+                        Console.WriteLine("    #  " + "    Имя             " + "      Результат");
+                        foreach (var user in allUsers) Console.WriteLine("| {0, -40} |", user);
+                        break;
 
-                int userAnswer = 0;
+                    }
+                case 1:
+                    {
+                        Console.WriteLine("Введите Имя");
+                        string name = Console.ReadLine();
 
 
-                userAnswer = CheckUserAnswer(randomQuestions, i, userAnswer);
-                    
-               
-                int rightAnswer = randomAnswers[i];
+                        Console.WriteLine("Введите фамилию");
+                        string surname = Console.ReadLine();
 
-                if (userAnswer == rightAnswer)
-                {
-                    countRightAnswers++;
-                }
+                        Console.WriteLine("успешно");
+
+
+                        for (int i = 0; i < countQuestions; i++)
+                        {
+
+                            int userAnswer = 0;
+
+
+                            userAnswer = CheckUserAnswer(randomQuestions, i, userAnswer);
+
+
+                            int rightAnswer = randomAnswers[i];
+
+                            if (userAnswer == rightAnswer)
+                            {
+                                countRightAnswers++;
+                            }
+                        }
+
+
+                        string finalDiagnose = CalculateDiagnose(countQuestions, countRightAnswers);
+
+                       
+                        User newUser = new User(0, name, surname, finalDiagnose);
+                        
+                        SaveToDB(newUser);
+
+                        Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
+
+                        string messageToUser = "Если желаете повторить - нажмите - ДА или НЕТ, если хотите выйти";
+
+
+                        isWork = GetUserChoise(messageToUser);
+
+                        if (isWork == false)
+                        {
+                            break;
+                        }
+                        break;
+                    }
+
+                
+
+                case 2:
+                    {
+                        isWork = false;
+                        Console.WriteLine("пока");
+                        break;
+
+                    }
+
+                default:
+                    {
+                        Console.WriteLine("НЕТ такой команды");
+                        break;
+                    }
             }
 
 
-            string finalDiagnose = CalculateDiagnose(countQuestions, countRightAnswers);
-
-            //продумать расчет если будет вопросов меньше чем диагнозов (по модулю надло брать)
-
-            Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
-
-            string messageToUser = "Если желаете повторить - нажмите - ДА или НЕТ, если хотите выйти";
-
-
-            bool userChoise = GetUserChoise(messageToUser);
-
-            if (userChoise == false)
-            {
-                break;
-            }
+            
         }
     }
+
+
+    static int GetIntFromString(string inputStr)
+    {
+        int input = 0;
+
+        try
+        {
+            input = int.Parse(inputStr);
+        }
+
+        catch (FormatException)
+        {
+            Console.WriteLine("Нет Такой команды");
+        }
+        return input;
+    }
+
+
 
 
     static void SaveToDB(User user)
     {
         List<User> AllCurrentUsers = ReadAllFromDB();
         int lastId = AllCurrentUsers.Count == 0 ? 0 : AllCurrentUsers.Last().Id;
-        //user.SetId(lastId + 1);
+       
         user.SetNewId(lastId + 1);
 
         AllCurrentUsers.Add(user);
