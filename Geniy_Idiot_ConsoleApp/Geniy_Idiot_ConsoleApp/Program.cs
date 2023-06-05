@@ -2,6 +2,40 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 using static System.Net.Mime.MediaTypeNames;
+using Newtonsoft.Json;
+
+
+class User // класс Юзер
+{
+    public string Name { get; private set; } // свойства класса 
+    public string Surname { get; private set; }
+    public int Id { get; private set; }
+
+    public User(int id, string name, string surname) // конструктор который принимает свойства
+    {
+        Id = id;
+        Name = name;
+        Surname = surname;
+
+    }
+
+
+
+    public void SetNewId(int id)
+    {
+        Id = id;
+    }
+
+
+    public override string ToString()
+    {
+        return $"{Id} {Name} {Surname}";
+    }
+
+
+
+
+}
 
 internal class Program
 {
@@ -101,6 +135,37 @@ internal class Program
     }
 
 
+    static void SaveToDB(User user)
+    {
+        List<User> AllCurrentUsers = ReadAllFromDB();
+        int lastId = AllCurrentUsers.Count == 0 ? 0 : AllCurrentUsers.Last().Id;
+        //user.SetId(lastId + 1);
+        user.SetNewId(lastId + 1);
+
+        AllCurrentUsers.Add(user);
+        string serializedUsers = JsonConvert.SerializeObject(AllCurrentUsers);
+        File.WriteAllText(DBFilePAth, serializedUsers);
+
+    }
+
+    static void SaveToDB(List<User> users)
+    {
+
+        string serializedUsers = JsonConvert.SerializeObject(users);
+        File.WriteAllText(DBFilePAth, serializedUsers);
+
+    }
+
+    static List<User> ReadAllFromDB()
+    {
+
+        string json = File.ReadAllText(DBFilePAth);
+        List<User> currentUsers = JsonConvert.DeserializeObject<List<User>>(json);
+
+        return currentUsers ?? new List<User>();
+
+    }
+
 
 
     static int CheckUserAnswer(string[] randomQuestions, int i, int userAnswer)
@@ -109,7 +174,7 @@ internal class Program
 
         while (checkAnswer == false)
         {
-            
+
             try
             {
                 checkAnswer = true;
@@ -117,7 +182,7 @@ internal class Program
                 Console.WriteLine("Вопрос # " + (i + 1));
                 Console.WriteLine(randomQuestions[i]);
                 userAnswer = Convert.ToInt32(Console.ReadLine());
-                
+
             }
 
             catch
@@ -125,12 +190,12 @@ internal class Program
                 Console.WriteLine("ВВЕДИТЕ ЧИСЛО!");
                 Console.WriteLine();
                 checkAnswer = false;
-                
+
             }
         }
         return (userAnswer);
     }
-        
+
 
     static bool GetUserChoise(string message)
     {
@@ -224,9 +289,9 @@ internal class Program
     }
 
 
-    
 
-    static string CalculateDiagnose( double countQuestions, int countRightAnswers)
+
+    static string CalculateDiagnose(double countQuestions, int countRightAnswers)
     {
 
         var numbersOfDiagnoses = 6;
@@ -239,36 +304,36 @@ internal class Program
         diagnoses[4] = "Талант";
         diagnoses[5] = "Гений";
 
-        string finalDiagnose ="";
+        string finalDiagnose = "";
 
         var scaleOfDiagnose = countQuestions / (numbersOfDiagnoses - 1);
 
         if (countRightAnswers >= 0 && countRightAnswers < scaleOfDiagnose)
         {
-            finalDiagnose = diagnoses[0]; 
+            finalDiagnose = diagnoses[0];
         }
         else if (countRightAnswers >= scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 2)
 
         {
-            finalDiagnose = diagnoses[1]; 
+            finalDiagnose = diagnoses[1];
 
         }
-        else if (countRightAnswers >= 2*scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 3)
+        else if (countRightAnswers >= 2 * scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 3)
 
         {
-            finalDiagnose = diagnoses[2]; 
+            finalDiagnose = diagnoses[2];
 
         }
         else if (countRightAnswers >= 3 * scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 4)
 
         {
-            finalDiagnose = diagnoses[3]; 
+            finalDiagnose = diagnoses[3];
 
         }
         else if (countRightAnswers >= 4 * scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 5)
 
         {
-            finalDiagnose = diagnoses[4]; 
+            finalDiagnose = diagnoses[4];
 
         }
         else if (countRightAnswers >= 5 * scaleOfDiagnose && countRightAnswers <= scaleOfDiagnose * 6)
@@ -282,7 +347,7 @@ internal class Program
 
         return (finalDiagnose);
 
-        
+
 
     }
 
