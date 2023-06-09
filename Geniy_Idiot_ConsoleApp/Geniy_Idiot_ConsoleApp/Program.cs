@@ -53,11 +53,11 @@ internal class Program
 
     static string DBFilePAth { get; set; }
 
-   
+
     private static void Main(string[] args)
     {
-        string fileDBName = "users_geniyidiot_game";
-        string fileFolderPath = Path.GetTempPath();
+        var fileDBName = "users_geniyidiot_game";
+        var fileFolderPath = Path.GetTempPath();
         DBFilePAth = fileFolderPath + fileDBName;
 
 
@@ -70,14 +70,14 @@ internal class Program
 
 
 
-        bool isWork = true;
-           
+        var isWork = true;
+
         while (isWork)
         {
-            
 
 
-            int inputCommand = GetMenu();
+
+            var inputCommand = GetMenu();
 
 
             switch (inputCommand)
@@ -90,16 +90,16 @@ internal class Program
 
                         Console.OutputEncoding = Encoding.UTF8;
                         var data = InitUser();
-                        string[] columnNames = data.Columns.Cast<DataColumn>()
+                        var columnNames = data.Columns.Cast<DataColumn>()
                                                 .Select(x => x.ColumnName)
                                                 .ToArray();
 
                         DataRow[] rows = data.Select();
 
-                        
+
                         var table = new ConsoleTable(columnNames);
 
-                        
+
 
                         foreach (DataRow row in rows)
                         {
@@ -108,26 +108,22 @@ internal class Program
 
                         table.Write(Format.Alternative);
 
-                        
+
                         break;
                     }
                 case 1:
                     {
-                        var countQuestions = 7;
+                       
+                        var questions = GetQuestions();
 
-                        int[] arrayCountQuestions = GetArrayCountQuestions(countQuestions);
+                        var answers = GetAnswers();
 
-                        string[] questions = GetQuestions(countQuestions);
+                        var countQuestions = questions.Count;
 
-                        int[] answers = GetAnswers(countQuestions);
+                        var countRightAnswers = 0;
 
-                        int countRightAnswers = 0;
-
-                        arrayCountQuestions = RandomizeNumbers(countQuestions, arrayCountQuestions);
-
-                        string[] randomQuestions = RandomizeQuestions(questions, arrayCountQuestions, countQuestions);
-
-                        int[] randomAnswers = RandomizeAnswers(answers, arrayCountQuestions, countQuestions);
+                        
+                        
 
                         Console.WriteLine("Введите Имя");
                         string name = Console.ReadLine();
@@ -135,41 +131,50 @@ internal class Program
 
                         Console.WriteLine("Введите фамилию");
                         string surname = Console.ReadLine();
-                        
+
+                        var random = new Random();
 
                         for (int i = 0; i < countQuestions; i++)
                         {
 
-                            int userAnswer = 0;
+                            var userAnswer = 0;
+
+                            var randomQuestionIndex =  random.Next(0, questions.Count);
+
+                            
+
+                            userAnswer = GetUserAnswer(i, randomQuestionIndex, questions);
 
 
-                            userAnswer = CheckUserAnswer(randomQuestions, i, userAnswer);
-
-
-                            int rightAnswer = randomAnswers[i];
+                            int rightAnswer = answers[randomQuestionIndex];
 
                             if (userAnswer == rightAnswer)
                             {
                                 countRightAnswers++;
                             }
+
+                            questions.RemoveAt(randomQuestionIndex);
+                            answers.RemoveAt(randomQuestionIndex);
                         }
+
+                       
 
 
                         string finalDiagnose = CalculateDiagnose(countQuestions, countRightAnswers);
 
-                       
+
                         User newUser = new User(0, name, surname, countRightAnswers, finalDiagnose);
-                        
+
                         SaveToDB(newUser);
 
-                        Console.WriteLine("----------------------------");
+                        Console.WriteLine("-----------------------------------");
                         Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
 
 
                         break;
                     }
 
-                
+
 
                 case 2:
                     {
@@ -193,46 +198,50 @@ internal class Program
             }
 
 
-            
+
         }
     }
 
 
     static int GetMenu()
     {
-        bool checkAnswer = false;
-        int input = 0;
-        while (checkAnswer == false)
+
+
+        while (true)
         {
-            string allCommands = "----------------------------\n0 - вывести результаты всех\n1 - новая игра \n2 - очистить предыдущие результаты\n3 - выход  \n ----------------------------";
+            string allCommands = "-----------------------------------\n0 - вывести результаты всех\n1 - новая игра \n2 - очистить предыдущие результаты\n3 - выход  \n -----------------------------------";
             Console.WriteLine(allCommands);
-            
+
             try
             {
-                checkAnswer = true;
-                 input = int.Parse(Console.ReadLine());
+
+                return int.Parse(Console.ReadLine());
 
             }
 
             catch (FormatException)
             {
                 Console.WriteLine("Нет Такой команды");
-                checkAnswer = false;
-                
+
+
+            }
+
+            catch (OverflowException)
+            {
+                Console.WriteLine("Нет Такой команды");
+
             }
         }
 
-        return (input);
 
     }
 
-   
+
 
     public static DataTable InitUser()
     {
 
         var table = new DataTable();
-
 
 
         table.Columns.Add("Id", typeof(int));
@@ -254,20 +263,20 @@ internal class Program
 
     static void ClearDB()
     {
-        
+
         File.WriteAllText(DBFilePAth, "");
         Console.WriteLine("Готово");
 
     }
 
-    
+
 
 
     static void SaveToDB(User user)
     {
         List<User> AllCurrentUsers = ReadAllFromDB();
         int lastId = AllCurrentUsers.Count == 0 ? 0 : AllCurrentUsers.Last().Id;
-       
+
         user.SetNewId(lastId + 1);
 
         AllCurrentUsers.Add(user);
@@ -296,105 +305,71 @@ internal class Program
 
 
 
-    static int CheckUserAnswer(string[] randomQuestions, int i, int userAnswer)
+    static int GetUserAnswer(int i, int randomQuestionIndex, List<string> questions)
     {
-        bool checkAnswer = false;
 
-        while (checkAnswer == false)
+
+        while (true)
         {
 
             try
             {
-                checkAnswer = true;
+
                 Console.WriteLine();
                 Console.WriteLine("Вопрос # " + (i + 1));
-                Console.WriteLine(randomQuestions[i]);
-                userAnswer = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine(questions[randomQuestionIndex]);
+                return Convert.ToInt32(Console.ReadLine());
 
             }
 
-            catch
+            catch (FormatException)
             {
+
                 Console.WriteLine("ВВЕДИТЕ ЧИСЛО!");
                 Console.WriteLine();
-                checkAnswer = false;
 
             }
-        }
-        return (userAnswer);
-    }
 
-
-    
-
-    static int[] GetArrayCountQuestions(int countQuestions)
-    {
-        int[] arrayCountQuestions = new int[countQuestions];
-
-
-        for (int i = 0; i < countQuestions; i++)
-        {
-
-            arrayCountQuestions[i] = i + 1;
-
+            catch (OverflowException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("ВВЕДИТЕ ЧИСЛО от -2*10^-9 до 2*10^9");
+            }
         }
 
-
-        return (arrayCountQuestions);
-    }
-
-    static int[] RandomizeNumbers(int countQuestions, int[] arrayCountQuestions)
-    {
-        Random randomIndex = new Random();
-
-
-        for (int i = countQuestions - 1; i >= 0; i--)
-        {
-
-
-            int j = randomIndex.Next(i);
-
-            int tmpNumbers = arrayCountQuestions[j];
-            arrayCountQuestions[j] = arrayCountQuestions[i];
-            arrayCountQuestions[i] = tmpNumbers;
-
-
-
-
-        }
-        return (arrayCountQuestions);
     }
 
 
 
 
-    static string[] GetQuestions(int countQuestions)
+    static List<string> GetQuestions()
     {
-        string[] questions = new string[countQuestions];
-        questions[0] = "Сколько будет два плюс два умноженное на два?";
-        questions[1] = "Бревно нужно распилить на 10 частей, Сколько нужно сделать распилов?";
-        questions[2] = "На двух руках 10 пальцев  (Сколько пальцев на 5 руках?)";
-        questions[3] = "Укол делают каждые пол часа  Сколько нужно минут для 3 уколов?";
-        questions[4] = "Пять свечей сгорело  Две потухли  Сколько свечей осталось?";
-        questions[5] = "Два умножить на два?";
-        questions[6] = "Три умножить на три?";
+        var questions = new List<string>();
+        questions.Add("Сколько будет два плюс два умноженное на два?");
+        questions.Add("Бревно нужно распилить на 10 частей, Сколько нужно сделать распилов?");
+        questions.Add("На двух руках 10 пальцев  (Сколько пальцев на 5 руках?)");
+        questions.Add("Укол делают каждые пол часа  Сколько нужно минут для 3 уколов?");
+        questions.Add("Пять свечей сгорело  Две потухли  Сколько свечей осталось?");
+        questions.Add("Два умножить на два?");
+        questions.Add("Три умножить на три?");
 
-        return (questions);
+        return questions;
     }
 
-    static int[] GetAnswers(int countQuestions)
+    static List<int> GetAnswers()
     {
-        int[] answers = new int[countQuestions];
-        answers[0] = 6;
-        answers[1] = 9;
-        answers[2] = 25;
-        answers[3] = 60;
-        answers[4] = 2;
-        answers[5] = 4;
-        answers[6] = 9;
+        var answers = new List<int>();
+        answers.Add(6);
+        answers.Add(9);
+        answers.Add(25);
+        answers.Add(60);
+        answers.Add(2);
+        answers.Add(4);
+        answers.Add(9);
+
         return (answers);
     }
-
+   
 
 
 
@@ -403,7 +378,7 @@ internal class Program
 
         var numbersOfDiagnoses = 6;
 
-        string[] diagnoses = new string[numbersOfDiagnoses];
+        var diagnoses = new string[numbersOfDiagnoses];
         diagnoses[0] = "Идиот";
         diagnoses[1] = "Кретин";
         diagnoses[2] = "Дурак";
@@ -459,43 +434,6 @@ internal class Program
     }
 
 
-
-    static string[] RandomizeQuestions(string[] questions, int[] arrayCountQuestions, int countQuestions)
-    {
-
-
-        string[] randomQuestions = new string[countQuestions];
-
-        for (int i = 0; i < countQuestions; i++)
-        {
-
-
-            randomQuestions[i] = questions[arrayCountQuestions[i] - 1];
-
-        }
-
-
-        return (randomQuestions);
-    }
-
-
-    static int[] RandomizeAnswers(int[] answers, int[] arrayCountQuestions, int countQuestions)
-    {
-
-
-        int[] randomAnswers = new int[countQuestions];
-
-        for (int i = 0; i < countQuestions; i++)
-        {
-
-
-            randomAnswers[i] = answers[arrayCountQuestions[i] - 1];
-
-        }
-
-
-        return (randomAnswers);
-    }
 
 
 }
