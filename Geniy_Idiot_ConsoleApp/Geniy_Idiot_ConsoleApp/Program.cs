@@ -11,42 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using ConsoleTables;
 
-
-class User // класс Юзер
-{
-    public string Name { get; private set; } // свойства класса 
-    public string Surname { get; private set; }
-    public int Id { get; private set; }
-    public int CountRightAnswers { get; private set; }
-    public string Diagnose { get; private set; }
-
-    public User(int id, string name, string surname, int countRightAnswers, string diagnose) // конструктор который принимает свойства
-    {
-        Id = id;
-        Name = name;
-        Surname = surname;
-        CountRightAnswers = countRightAnswers;
-        Diagnose = diagnose;
-
-    }
-
-
-
-    public void SetNewId(int id)
-    {
-        Id = id;
-    }
-
-
-    public override string ToString()
-    {
-        return $"| {Id} | {Name} {Surname} {CountRightAnswers} {Diagnose}";
-    }
-
-
-
-
-}
+//сделать класс работы с файловой системой
+// дорабортать если надо класс Юзер
+// все методы должны быть в классах  
 
 internal class Program
 {
@@ -56,6 +23,17 @@ internal class Program
 
     private static void Main(string[] args)
     {
+
+        Question question = new Question("Сколько будет два плюс два умноженное на два?", 6); // пустой конструктор  такой создается по умолчанию автоматически  
+        question = new Question(" два?", 2); // пустой конструктор  такой создается по умолчанию автоматически  
+        question = new Question(" три?", 3);
+
+        Console.WriteLine(question.Print());
+
+        question.Text = "change Q";
+        Console.WriteLine(question.Print());
+
+
         var fileDBName = "users_geniyidiot_game";
         var fileFolderPath = Path.GetTempPath();
         DBFilePAth = fileFolderPath + fileDBName;
@@ -75,8 +53,6 @@ internal class Program
         while (isWork)
         {
 
-
-
             var inputCommand = GetMenu();
 
 
@@ -86,28 +62,30 @@ internal class Program
                     {
                         var allUsers = ReadAllFromDB();
                         if (allUsers.Count == 0) Console.WriteLine("пока никого нет");
-
-
-                        Console.OutputEncoding = Encoding.UTF8;
-                        var data = InitUser();
-                        var columnNames = data.Columns.Cast<DataColumn>()
-                                                .Select(x => x.ColumnName)
-                                                .ToArray();
-
-                        DataRow[] rows = data.Select();
-
-
-                        var table = new ConsoleTable(columnNames);
-
-
-
-                        foreach (DataRow row in rows)
+                        else
                         {
-                            table.AddRow(row.ItemArray);
+                            Console.OutputEncoding = Encoding.UTF8;
+                            var data = InitUser();
+                            var columnNames = data.Columns.Cast<DataColumn>()
+                                                    .Select(x => x.ColumnName)
+                                                    .ToArray();
+
+                            DataRow[] rows = data.Select();
+
+
+                            var table = new ConsoleTable(columnNames);
+
+
+
+                            foreach (DataRow row in rows)
+                            {
+                                table.AddRow(row.ItemArray);
+                            }
+
+                            table.Write(Format.Alternative);
                         }
 
-                        table.Write(Format.Alternative);
-
+                       
 
                         break;
                     }
@@ -166,6 +144,7 @@ internal class Program
                         User newUser = new User(0, name, surname, countRightAnswers, finalDiagnose);
 
                         SaveToDB(newUser);
+                        
 
                         Console.WriteLine("-----------------------------------");
                         Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
@@ -199,20 +178,6 @@ internal class Program
 
 
 
-<<<<<<< HEAD
-=======
-            Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
-
-            string messageToUser = "Если желаете повторить - нажмите - ДА или НЕТ, если хотите выйти";
-
-
-            bool userChoise = GetUserChoise(messageToUser);
-
-            if (userChoise == false)
-            {
-                break;
-            }
->>>>>>> egorov_lesson_2_2
         }
     }
 
@@ -271,7 +236,7 @@ internal class Program
 
             table.Rows.Add(user.Id, user.Name, user.Surname, user.CountRightAnswers, user.Diagnose);
 
-        return table;
+        return table; 
     }
 
 
@@ -354,13 +319,8 @@ internal class Program
     }
 
 
-<<<<<<< HEAD
-
-
     static List<string> GetQuestions()
-=======
-    static string[] GetQuestions(int countQuestions)
->>>>>>> egorov_lesson_2_2
+
     {
         var questions = new List<string>();
         questions.Add("Сколько будет два плюс два умноженное на два?");
