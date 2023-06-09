@@ -199,6 +199,20 @@ internal class Program
 
 
 
+<<<<<<< HEAD
+=======
+            Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
+
+            string messageToUser = "Если желаете повторить - нажмите - ДА или НЕТ, если хотите выйти";
+
+
+            bool userChoise = GetUserChoise(messageToUser);
+
+            if (userChoise == false)
+            {
+                break;
+            }
+>>>>>>> egorov_lesson_2_2
         }
     }
 
@@ -340,9 +354,13 @@ internal class Program
     }
 
 
+<<<<<<< HEAD
 
 
     static List<string> GetQuestions()
+=======
+    static string[] GetQuestions(int countQuestions)
+>>>>>>> egorov_lesson_2_2
     {
         var questions = new List<string>();
         questions.Add("Сколько будет два плюс два умноженное на два?");
