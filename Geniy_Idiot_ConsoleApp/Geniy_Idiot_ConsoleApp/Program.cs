@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using ConsoleTables;
 using System.Reflection.Emit;
 
-
 partial class Program
 {
 
@@ -19,16 +18,32 @@ partial class Program
         private static void Main(string[] args)
         {
 
+            FileSystem fileSystemUser = new FileSystem();
+
+            fileSystemUser.FileDBName = "users_geniyidiot_game";
+            fileSystemUser.FileFolderPath = Path.GetTempPath();
+            fileSystemUser.DBFilePath = fileSystemUser.FileFolderPath + fileSystemUser.FileDBName;
+
+            FileSystem fileSystemQuestion = new FileSystem();
+
+            fileSystemQuestion.FileDBName = "questions_geniyidiot_game";
+            fileSystemQuestion.FileFolderPath = Path.GetTempPath();
+            fileSystemQuestion.DBFilePath = fileSystemQuestion.FileFolderPath + fileSystemQuestion.FileDBName;
+
+
+
+            fileSystemUser.CheckFileIsCreate();
+            fileSystemQuestion.CheckFileIsCreate();
+
+
 
             UserStorage userStorage = new UserStorage();
 
-            userStorage.FileDBName = "users_geniyidiot_game";
-            userStorage.FileFolderPath = Path.GetTempPath();
-            userStorage.DBFilePath = userStorage.FileDBName + userStorage.DBFilePath;
+            QuestionStorage questionStorage = new QuestionStorage();
 
 
-            userStorage.CheckFileIsCreate();
-
+            var allquestions = questionStorage.GetQuestions();
+            fileSystemQuestion.SaveQuestionsToDB(allquestions);
 
 
             bool isWork = true;
@@ -43,12 +58,12 @@ partial class Program
                 {
                     case 0:
                         {
-                            var allUsers = userStorage.ReadAllFromDB();
+                            var allUsers = fileSystemUser.ReadAllUsersFromDB();
                             if (allUsers.Count == 0) Console.WriteLine("пока никого нет");
                             else
                             {
                                 Console.OutputEncoding = Encoding.UTF8;
-                                var data = InitUser(userStorage);
+                                var data = InitUser(fileSystemUser);
                                 var columnNames = data.Columns.Cast<DataColumn>()
                                                         .Select(x => x.ColumnName)
                                                         .ToArray();
@@ -75,7 +90,7 @@ partial class Program
                     case 1:
                         {
 
-                            var questions = GetQuestions();
+                            var questions = questionStorage.GetQuestions();
 
 
 
@@ -104,7 +119,7 @@ partial class Program
 
 
 
-                                userAnswer = GetUserAnswer(i, randomQuestionIndex, questions);
+                                userAnswer = userStorage.GetUserAnswer(i, randomQuestionIndex, questions);
 
 
                                 var rightAnswer = questions[randomQuestionIndex].Answer;
@@ -121,12 +136,12 @@ partial class Program
 
 
 
-                            string finalDiagnose = CalculateDiagnose(countQuestions, countRightAnswers);
+                            string finalDiagnose = userStorage.CalculateDiagnose(countQuestions, countRightAnswers);
 
 
                             User newUser = new User(0, name, surname, countRightAnswers, finalDiagnose);
 
-                            userStorage.SaveToDB(newUser);
+                            fileSystemUser.SaveUsersToDB(newUser);
 
 
                             Console.WriteLine("-----------------------------------");
@@ -141,7 +156,7 @@ partial class Program
                     case 2:
                         {
 
-                            userStorage.ClearDB();
+                            fileSystemUser.ClearDB();
                             break;
 
                         }
@@ -199,7 +214,7 @@ partial class Program
 
 
 
-        public static DataTable InitUser(UserStorage fileDBName)
+        public static DataTable InitUser(FileSystem fileSystemUser)
         {
 
             var table = new DataTable();
@@ -211,7 +226,7 @@ partial class Program
             table.Columns.Add("Right Answers", typeof(int));
             table.Columns.Add("Diagnose", typeof(string));
 
-            var allUsers = fileDBName.ReadAllFromDB();
+            var allUsers = fileSystemUser.ReadAllUsersFromDB();
 
 
             foreach (var user in allUsers)
@@ -222,129 +237,13 @@ partial class Program
         }
 
 
-        
-
-
-
-   
-
-
-    static int GetUserAnswer(int i, int randomQuestionIndex, List<Question> questions)
-    {
-
-
-        while (true)
-        {
-
-            try
-            {
-
-                Console.WriteLine();
-                Console.WriteLine("Вопрос # " + (i + 1));
-                Console.WriteLine(questions[randomQuestionIndex].Text);
-                return Convert.ToInt32(Console.ReadLine());
-
-            }
-
-            catch (FormatException)
-            {
-
-                Console.WriteLine("ВВЕДИТЕ ЧИСЛО!");
-                Console.WriteLine();
-
-            }
-
-            catch (OverflowException)
-            {
-                Console.WriteLine();
-                Console.WriteLine("ВВЕДИТЕ ЧИСЛО от -2*10^-9 до 2*10^9");
-            }
-        }
-
-    }
-
-
-    static List<Question> GetQuestions()
-
-    {
-        var questions = new List<Question>();
-
-        questions.Add(new Question("Сколько будет два плюс два умноженное на два?", 6));
-        questions.Add(new Question("Бревно нужно распилить на 10 частей, Сколько нужно сделать распилов?", 9));
-        questions.Add(new Question("На двух руках 10 пальцев  (Сколько пальцев на 5 руках?)", 25));
-        questions.Add(new Question("Укол делают каждые пол часа  Сколько нужно минут для 3 уколов?", 60));
-        questions.Add(new Question("Пять свечей сгорело  Две потухли  Сколько свечей осталось?", 2));
-
-        return questions;
-    }
 
 
 
 
-    static string CalculateDiagnose(double countQuestions, int countRightAnswers)
-    {
-
-        var numbersOfDiagnoses = 6;
-
-        var diagnoses = new string[numbersOfDiagnoses];
-        diagnoses[0] = "Идиот";
-        diagnoses[1] = "Кретин";
-        diagnoses[2] = "Дурак";
-        diagnoses[3] = "Нормальный";
-        diagnoses[4] = "Талант";
-        diagnoses[5] = "Гений";
-
-        string finalDiagnose = "";
-
-        var scaleOfDiagnose = countQuestions / (numbersOfDiagnoses - 1);
-
-        if (countRightAnswers >= 0 && countRightAnswers < scaleOfDiagnose)
-        {
-            finalDiagnose = diagnoses[0];
-        }
-        else if (countRightAnswers >= scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 2)
-
-        {
-            finalDiagnose = diagnoses[1];
-
-        }
-        else if (countRightAnswers >= 2 * scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 3)
-
-        {
-            finalDiagnose = diagnoses[2];
-
-        }
-        else if (countRightAnswers >= 3 * scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 4)
-
-        {
-            finalDiagnose = diagnoses[3];
-
-        }
-        else if (countRightAnswers >= 4 * scaleOfDiagnose && countRightAnswers < scaleOfDiagnose * 5)
-
-        {
-            finalDiagnose = diagnoses[4];
-
-        }
-        else if (countRightAnswers >= 5 * scaleOfDiagnose && countRightAnswers <= scaleOfDiagnose * 6)
-
-        {
-            finalDiagnose = diagnoses[5];
-
-        }
 
 
-
-        return (finalDiagnose);
-
-
-
-    }
+    
 
 }
-
-
-
-
-
 
