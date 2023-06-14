@@ -9,6 +9,17 @@ class User // класс Юзер
     public string Diagnose { get; private set; }
 
 
+    public User(int id, string name, string surname, int countRightAnswers, string diagnose) // конструктор который принимает свойства
+    {
+        Id = id;
+        Name = name;
+        Surname = surname;
+        CountRightAnswers = countRightAnswers;
+        Diagnose = diagnose;
+
+    }
+
+
     public void SetNewId(int id)
     {
         Id = id;
@@ -21,15 +32,7 @@ class User // класс Юзер
     }
 
 
-    public User(int id, string name, string surname, int countRightAnswers, string diagnose) // конструктор который принимает свойства
-    {
-        Id = id;
-        Name = name;
-        Surname = surname;
-        CountRightAnswers = countRightAnswers;
-        Diagnose = diagnose;
-
-    }
+   
 
     
     

@@ -2,7 +2,6 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 using static System.Net.Mime.MediaTypeNames;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,281 +9,227 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConsoleTables;
+using System.Reflection.Emit;
 
-//сделать класс работы с файловой системой
-// дорабортать если надо класс Юзер
-// все методы должны быть в классах  
 
-internal class Program
+partial class Program
 {
 
-    static string DBFilePAth { get; set; }
 
-
-    private static void Main(string[] args)
-    {
-
-        Question question = new Question("Сколько будет два плюс два умноженное на два?", 6); // пустой конструктор  такой создается по умолчанию автоматически  
-        question = new Question(" два?", 2); // пустой конструктор  такой создается по умолчанию автоматически  
-        question = new Question(" три?", 3);
-
-        Console.WriteLine(question.Print());
-
-        question.Text = "change Q";
-        Console.WriteLine(question.Print());
-
-
-        var fileDBName = "users_geniyidiot_game";
-        var fileFolderPath = Path.GetTempPath();
-        DBFilePAth = fileFolderPath + fileDBName;
-
-
-
-        if (File.Exists(DBFilePAth) == false)
-        {
-            var file = File.Create(DBFilePAth);
-            file.Close();
-        }
-
-
-
-        var isWork = true;
-
-        while (isWork)
+        private static void Main(string[] args)
         {
 
-            var inputCommand = GetMenu();
+
+            UserStorage userStorage = new UserStorage();
+
+            userStorage.FileDBName = "users_geniyidiot_game";
+            userStorage.FileFolderPath = Path.GetTempPath();
+            userStorage.DBFilePath = userStorage.FileDBName + userStorage.DBFilePath;
 
 
-            switch (inputCommand)
+            userStorage.CheckFileIsCreate();
+
+
+
+            bool isWork = true;
+
+            while (isWork)
             {
-                case 0:
-                    {
-                        var allUsers = ReadAllFromDB();
-                        if (allUsers.Count == 0) Console.WriteLine("пока никого нет");
-                        else
+
+                var inputCommand = GetMenu();
+
+
+                switch (inputCommand)
+                {
+                    case 0:
                         {
-                            Console.OutputEncoding = Encoding.UTF8;
-                            var data = InitUser();
-                            var columnNames = data.Columns.Cast<DataColumn>()
-                                                    .Select(x => x.ColumnName)
-                                                    .ToArray();
-
-                            DataRow[] rows = data.Select();
-
-
-                            var table = new ConsoleTable(columnNames);
-
-
-
-                            foreach (DataRow row in rows)
+                            var allUsers = userStorage.ReadAllFromDB();
+                            if (allUsers.Count == 0) Console.WriteLine("пока никого нет");
+                            else
                             {
-                                table.AddRow(row.ItemArray);
+                                Console.OutputEncoding = Encoding.UTF8;
+                                var data = InitUser(userStorage);
+                                var columnNames = data.Columns.Cast<DataColumn>()
+                                                        .Select(x => x.ColumnName)
+                                                        .ToArray();
+
+                                DataRow[] rows = data.Select();
+
+
+                                var table = new ConsoleTable(columnNames);
+
+
+
+                                foreach (DataRow row in rows)
+                                {
+                                    table.AddRow(row.ItemArray);
+                                }
+
+                                table.Write(Format.Alternative);
                             }
 
-                            table.Write(Format.Alternative);
+
+
+                            break;
                         }
-
-                       
-
-                        break;
-                    }
-                case 1:
-                    {
-
-                        var questions = GetQuestions();
-
-                        var answers = GetAnswers();
-
-                        var countQuestions = questions.Count;
-
-                        var countRightAnswers = 0;
-
-
-
-
-                        Console.WriteLine("Введите Имя");
-                        string name = Console.ReadLine();
-
-
-                        Console.WriteLine("Введите фамилию");
-                        string surname = Console.ReadLine();
-
-                        var random = new Random();
-
-                        for (int i = 0; i < countQuestions; i++)
+                    case 1:
                         {
 
-                            var userAnswer = 0;
-
-                            var randomQuestionIndex = random.Next(0, questions.Count);
+                            var questions = GetQuestions();
 
 
 
-                            userAnswer = GetUserAnswer(i, randomQuestionIndex, questions);
+                            var countQuestions = questions.Count;
+
+                            var countRightAnswers = 0;
 
 
-                            int rightAnswer = answers[randomQuestionIndex];
 
-                            if (userAnswer == rightAnswer)
+
+                            Console.WriteLine("Введите Имя");
+                            string name = Console.ReadLine();
+
+
+                            Console.WriteLine("Введите фамилию");
+                            string surname = Console.ReadLine();
+
+                            var random = new Random();
+
+                            for (int i = 0; i < countQuestions; i++)
                             {
-                                countRightAnswers++;
+
+                                var userAnswer = 0;
+
+                                var randomQuestionIndex = random.Next(0, questions.Count);
+
+
+
+                                userAnswer = GetUserAnswer(i, randomQuestionIndex, questions);
+
+
+                                var rightAnswer = questions[randomQuestionIndex].Answer;
+
+                                if (userAnswer == rightAnswer)
+                                {
+                                    countRightAnswers++;
+                                }
+
+                                questions.RemoveAt(randomQuestionIndex);
+
                             }
 
-                            questions.RemoveAt(randomQuestionIndex);
-                            answers.RemoveAt(randomQuestionIndex);
+
+
+
+                            string finalDiagnose = CalculateDiagnose(countQuestions, countRightAnswers);
+
+
+                            User newUser = new User(0, name, surname, countRightAnswers, finalDiagnose);
+
+                            userStorage.SaveToDB(newUser);
+
+
+                            Console.WriteLine("-----------------------------------");
+                            Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
+
+
+                            break;
                         }
 
 
 
+                    case 2:
+                        {
 
-                        string finalDiagnose = CalculateDiagnose(countQuestions, countRightAnswers);
+                            userStorage.ClearDB();
+                            break;
+
+                        }
+                    case 3:
+                        {
+                            isWork = false;
+                            Console.WriteLine("пока");
+                            break;
+                        }
+
+                    default:
+                        {
+                            Console.WriteLine("НЕТ такой команды");
+                            break;
+                        }
+                }
 
 
-                        User newUser = new User(0, name, surname, countRightAnswers, finalDiagnose);
 
-                        SaveToDB(newUser);
-                        
-
-                        Console.WriteLine("-----------------------------------");
-                        Console.WriteLine(name + ", Ваш диагноз - " + finalDiagnose);
-
-
-                        break;
-                    }
-
-
-
-                case 2:
-                    {
-
-                        ClearDB();
-                        break;
-
-                    }
-                case 3:
-                    {
-                        isWork = false;
-                        Console.WriteLine("пока");
-                        break;
-                    }
-
-                default:
-                    {
-                        Console.WriteLine("НЕТ такой команды");
-                        break;
-                    }
             }
-
-
-
         }
-    }
 
 
-    static int GetMenu()
-    {
-
-
-        while (true)
+        static int GetMenu()
         {
-            string allCommands = "-----------------------------------\n0 - вывести результаты всех\n1 - новая игра \n2 - очистить предыдущие результаты\n3 - выход  \n -----------------------------------";
-            Console.WriteLine(allCommands);
 
-            try
+            while (true)
             {
+                string allCommands = "-----------------------------------\n0 - вывести результаты всех\n1 - новая игра \n2 - очистить предыдущие результаты\n3 - выход  \n -----------------------------------";
+                Console.WriteLine(allCommands);
 
-                return int.Parse(Console.ReadLine());
+                try
+                {
 
+                    return int.Parse(Console.ReadLine());
+
+                }
+
+                catch (FormatException)
+                {
+                    Console.WriteLine("Нет Такой команды");
+
+
+                }
+
+                catch (OverflowException)
+                {
+                    Console.WriteLine("Нет Такой команды");
+
+                }
             }
 
-            catch (FormatException)
-            {
-                Console.WriteLine("Нет Такой команды");
 
-
-            }
-
-            catch (OverflowException)
-            {
-                Console.WriteLine("Нет Такой команды");
-
-            }
         }
 
 
-    }
+
+        public static DataTable InitUser(UserStorage fileDBName)
+        {
+
+            var table = new DataTable();
+
+
+            table.Columns.Add("Id", typeof(int));
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("Surname", typeof(string));
+            table.Columns.Add("Right Answers", typeof(int));
+            table.Columns.Add("Diagnose", typeof(string));
+
+            var allUsers = fileDBName.ReadAllFromDB();
+
+
+            foreach (var user in allUsers)
+
+                table.Rows.Add(user.Id, user.Name, user.Surname, user.CountRightAnswers, user.Diagnose);
+
+            return table;
+        }
+
+
+        
 
 
 
-    public static DataTable InitUser()
-    {
-
-        var table = new DataTable();
+   
 
 
-        table.Columns.Add("Id", typeof(int));
-        table.Columns.Add("Name", typeof(string));
-        table.Columns.Add("Surname", typeof(string));
-        table.Columns.Add("Right Answers", typeof(int));
-        table.Columns.Add("Diagnose", typeof(string));
-
-        var allUsers = ReadAllFromDB();
-
-
-        foreach (var user in allUsers)
-
-            table.Rows.Add(user.Id, user.Name, user.Surname, user.CountRightAnswers, user.Diagnose);
-
-        return table; 
-    }
-
-
-    static void ClearDB()
-    {
-
-        File.WriteAllText(DBFilePAth, "");
-        Console.WriteLine("Готово");
-
-    }
-
-
-
-
-    static void SaveToDB(User user)
-    {
-        List<User> AllCurrentUsers = ReadAllFromDB();
-        int lastId = AllCurrentUsers.Count == 0 ? 0 : AllCurrentUsers.Last().Id;
-
-        user.SetNewId(lastId + 1);
-
-        AllCurrentUsers.Add(user);
-        string serializedUsers = JsonConvert.SerializeObject(AllCurrentUsers);
-        File.WriteAllText(DBFilePAth, serializedUsers);
-
-    }
-
-    static void SaveToDB(List<User> users)
-    {
-
-        string serializedUsers = JsonConvert.SerializeObject(users);
-        File.WriteAllText(DBFilePAth, serializedUsers);
-
-    }
-
-    static List<User> ReadAllFromDB()
-    {
-
-        string json = File.ReadAllText(DBFilePAth);
-        List<User> currentUsers = JsonConvert.DeserializeObject<List<User>>(json);
-
-        return currentUsers ?? new List<User>();
-
-    }
-
-
-
-    static int GetUserAnswer(int i, int randomQuestionIndex, List<string> questions)
+    static int GetUserAnswer(int i, int randomQuestionIndex, List<Question> questions)
     {
 
 
@@ -296,7 +241,7 @@ internal class Program
 
                 Console.WriteLine();
                 Console.WriteLine("Вопрос # " + (i + 1));
-                Console.WriteLine(questions[randomQuestionIndex]);
+                Console.WriteLine(questions[randomQuestionIndex].Text);
                 return Convert.ToInt32(Console.ReadLine());
 
             }
@@ -319,33 +264,18 @@ internal class Program
     }
 
 
-    static List<string> GetQuestions()
+    static List<Question> GetQuestions()
 
     {
-        var questions = new List<string>();
-        questions.Add("Сколько будет два плюс два умноженное на два?");
-        questions.Add("Бревно нужно распилить на 10 частей, Сколько нужно сделать распилов?");
-        questions.Add("На двух руках 10 пальцев  (Сколько пальцев на 5 руках?)");
-        questions.Add("Укол делают каждые пол часа  Сколько нужно минут для 3 уколов?");
-        questions.Add("Пять свечей сгорело  Две потухли  Сколько свечей осталось?");
-        questions.Add("Два умножить на два?");
-        questions.Add("Три умножить на три?");
+        var questions = new List<Question>();
+
+        questions.Add(new Question("Сколько будет два плюс два умноженное на два?", 6));
+        questions.Add(new Question("Бревно нужно распилить на 10 частей, Сколько нужно сделать распилов?", 9));
+        questions.Add(new Question("На двух руках 10 пальцев  (Сколько пальцев на 5 руках?)", 25));
+        questions.Add(new Question("Укол делают каждые пол часа  Сколько нужно минут для 3 уколов?", 60));
+        questions.Add(new Question("Пять свечей сгорело  Две потухли  Сколько свечей осталось?", 2));
 
         return questions;
-    }
-
-    static List<int> GetAnswers()
-    {
-        var answers = new List<int>();
-        answers.Add(6);
-        answers.Add(9);
-        answers.Add(25);
-        answers.Add(60);
-        answers.Add(2);
-        answers.Add(4);
-        answers.Add(9);
-
-        return (answers);
     }
 
 
@@ -411,10 +341,10 @@ internal class Program
 
     }
 
-
-
-
 }
+
+
+
 
 
 

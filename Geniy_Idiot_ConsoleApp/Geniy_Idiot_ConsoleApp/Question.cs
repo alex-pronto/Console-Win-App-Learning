@@ -1,7 +1,12 @@
-﻿class Question
+﻿using System.Xml.Linq;
+using System.Collections.Generic;
+
+
+
+class Question
 {
 
-    public string Text; // это поля класса  его описание
+    public string Text; 
     public int Answer;
 
     public Question(string text, int answer)
@@ -10,13 +15,8 @@
         Answer = answer;
     }
 
-    public string Print()  // это метод  функция которая делает какие то вычисления операции с полями класса
-    {
-        return "Вопрос " + Text;
-    }
+   
 
-    
-    
 }
 
 
