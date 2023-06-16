@@ -23,13 +23,7 @@ internal class FileSystem
 
     }
 
-    public void SaveToDB(info)
-    {
-
-        string serializedUsers = JsonConvert.SerializeObject(info);
-        File.WriteAllText(DBFilePath, serializedUsers);
-
-    }
+   
 
 
 

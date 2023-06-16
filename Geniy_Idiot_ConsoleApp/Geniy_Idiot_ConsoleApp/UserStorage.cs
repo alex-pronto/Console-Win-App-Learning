@@ -66,7 +66,7 @@ class UserStorage
     }
 
 
-    public int GetUserAnswer(int i, int randomQuestionIndex, List<Question> questions)
+    public static int GetNumber()
     {
 
 
@@ -76,9 +76,7 @@ class UserStorage
             try
             {
 
-                Console.WriteLine();
-                Console.WriteLine("Вопрос # " + (i + 1));
-                Console.WriteLine(questions[randomQuestionIndex].Text);
+                
                 return Convert.ToInt32(Console.ReadLine());
 
             }
@@ -100,8 +98,103 @@ class UserStorage
 
     }
 
-    
 
+    public static string EnterNewQuestion()
+    {
+
+        while (true)
+        {
+
+            try
+            {
+
+                return Console.ReadLine(); ;
+
+
+
+            }
+
+            catch (FormatException)
+            {
+
+                Console.WriteLine($"Введите текст вопроса");
+                Console.WriteLine();
+
+            }
+
+            catch (OverflowException)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Введите текст вопроса");
+            }
+        }
+
+    }
+
+
+    public static int GetQuestionNumber(int questionsCount)
+    {
+
+        while (true)
+        {
+
+            try
+            {
+                int questionNumber = Convert.ToInt32(Console.ReadLine());
+                if (questionNumber <= questionsCount && questionNumber > 0)
+                {
+                    return questionNumber;
+                }
+                else if (questionNumber == 0)
+                {
+                    return questionNumber;
+                }
+                else Console.WriteLine($"Введите номер вопроса от 1 до {questionsCount} или 0 для выхода в меню");
+
+            }
+
+            catch (FormatException)
+            {
+
+                Console.WriteLine($"Введите номер вопроса от 1 до {questionsCount} или 0 для выхода в меню");
+                Console.WriteLine();
+
+            }
+
+            catch (OverflowException)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Введите номер вопроса от 1 до {questionsCount} или 0 для выхода в меню");
+            }
+        }
+
+    }
+
+    public static Question AddNewQuestion()
+    {
+        
+
+        Console.WriteLine("-----------------------------------\n введите текст вопроса который хотите добавить");
+
+        var userQuestion = UserStorage.EnterNewQuestion();
+
+
+        Console.WriteLine("-----------------------------------\n введите число - ответ на вопрос");
+
+        var userAnswer = UserStorage.GetNumber();
+
+        Question newQuestion = new Question(userQuestion, userAnswer);
+
+        Console.WriteLine("-----------------------------------\n Вопрос и ответ добавлен");
+
+        return newQuestion;
+
+        
+
+        
+
+        
+    }
 
 
 

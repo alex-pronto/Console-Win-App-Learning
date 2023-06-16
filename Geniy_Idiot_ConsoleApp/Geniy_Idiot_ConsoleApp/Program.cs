@@ -123,8 +123,10 @@ partial class Program
                                 var randomQuestionIndex = random.Next(0, questions.Count);
 
 
-
-                                userAnswer = userStorage.GetUserAnswer(i, randomQuestionIndex, questions);
+                                Console.WriteLine();
+                                Console.WriteLine("Вопрос # " + (i + 1));
+                                Console.WriteLine(questions[randomQuestionIndex].Text);
+                                userAnswer = UserStorage.GetNumber();
 
 
                                 var rightAnswer = questions[randomQuestionIndex].Answer;
@@ -182,13 +184,14 @@ partial class Program
                                 Console.WriteLine($"{i+1} {questions[i].Text}");
                             }
                             Console.WriteLine();
-                            Console.WriteLine("-----------------------------------\n введите номер вопроса который хотите удалить \n или ввведите 000 для выхода в меню");
+                            Console.WriteLine("-----------------------------------\n введите номер вопроса который хотите удалить \n или ввведите 0 для выхода в меню");
 
 
                             
 
-                            var questionToDelete = GetQuestionNumber(questions.Count);
-                        if (questionToDelete == 000)
+                        var questionToDelete = UserStorage.GetQuestionNumber(questions.Count);
+
+                        if (questionToDelete == 0)
                         {
                             break; 
                         }
@@ -200,11 +203,10 @@ partial class Program
                             fileSystemQuestion.ClearDB();
                             fileSystemQuestion.SaveQuestionsToDB(questions);
 
-                            Console.WriteLine();
+                            
                             Console.WriteLine("Готово.  Вопрос удален");
-                            Console.WriteLine();
                             Console.WriteLine("Текущий список вопросов");
-                            Console.WriteLine();
+                            
                             for (int i = 0; i < questions.Count; i++)
                             {
                                 Console.WriteLine($"{i + 1} {questions[i].Text}");
@@ -217,28 +219,13 @@ partial class Program
 
                     case 4:
                         {
-                            Console.WriteLine("-----------------------------------\n введите текст вопроса который хотите добавить");
-
-                            var userQuestion = EnterNewQuestion();
-
-                            
-
-                            Console.WriteLine("-----------------------------------\n введите число - ответ на вопрос");
-
-                            var userAnswer = EnterNewAnswer();
-
-                            Question newQuestion = new Question(userQuestion, userAnswer);
-
-
-                            
+                            var newQuestion = UserStorage.AddNewQuestion();
                             var currentQuestions = fileSystemQuestion.ReadQuestionsFromDB();
                             currentQuestions.Add(newQuestion);
                             fileSystemQuestion.SaveQuestionsToDB(currentQuestions);
 
 
-                        Console.WriteLine("-----------------------------------\n Вопрос и ответ добавлен");
-
-                            break;
+                        break;
                         }
 
                     case 5:
@@ -304,111 +291,6 @@ partial class Program
 
 
 
-       
-
-
-    static int GetQuestionNumber(int questionsCount)
-    {
-
-        while (true)
-        {
-
-            try
-            {
-                int questionNumber = Convert.ToInt32(Console.ReadLine());
-                if (questionNumber <= questionsCount && questionNumber > 0)
-                {
-                    return questionNumber;
-                }
-                else if (questionNumber == 000)
-                {
-                    return questionNumber;
-                }
-                else Console.WriteLine($"Введите номер вопроса от 1 до {questionsCount}");
-
-            }
-            
-            catch (FormatException)
-            {
-
-                Console.WriteLine($"Введите номер вопроса от 1 до {questionsCount}");
-                Console.WriteLine();
-
-            }
-
-            catch (OverflowException)
-            {
-                Console.WriteLine();
-                Console.WriteLine($"Введите номер вопроса от 1 до {questionsCount}");
-            }
-        }
-
-    }
-
-
-    static string EnterNewQuestion()
-    {
-
-        while (true)
-        {
-
-            try
-            {
-                
-                return Console.ReadLine(); ;
-
-
-
-            }
-
-            catch (FormatException)
-            {
-
-                Console.WriteLine($"Введите текст вопроса");
-                Console.WriteLine();
-
-            }
-
-            catch (OverflowException)
-            {
-                Console.WriteLine();
-                Console.WriteLine($"Введите текст вопроса");
-            }
-        }
-
-    }
-
-
-    
-    static int EnterNewAnswer()
-    {
-
-        while (true)
-        {
-
-            try
-            {
-               
-               return Convert.ToInt32(Console.ReadLine());
-               
-            }
-
-            catch (FormatException)
-            {
-
-                Console.WriteLine($"Введите число");
-                Console.WriteLine();
-
-            }
-
-            catch (OverflowException)
-            {
-                Console.WriteLine();
-                Console.WriteLine($"ВВЕДИТЕ ЧИСЛО от - 2 * 10 ^ -9 до 2 * 10 ^ 9");
-            }
-        }
-
-    }
 
     public static DataTable InitUser(FileSystem fileSystemUser)
     {
