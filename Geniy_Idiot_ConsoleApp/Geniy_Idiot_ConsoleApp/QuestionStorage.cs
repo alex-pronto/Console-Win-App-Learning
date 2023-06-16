@@ -1,5 +1,9 @@
 ﻿class QuestionStorage
 {
+    public List<Question> Questions;
+    
+   
+
 
     public List<Question> GetQuestions()
 

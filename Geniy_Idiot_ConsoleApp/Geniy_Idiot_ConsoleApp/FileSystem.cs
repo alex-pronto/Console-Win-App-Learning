@@ -23,20 +23,10 @@ internal class FileSystem
 
     }
 
-    public List<User> ReadAllUsersFromDB()
-    {
-
-        string json = File.ReadAllText(DBFilePath);
-        List<User> currentUsers = JsonConvert.DeserializeObject<List<User>>(json);
-
-
-        return currentUsers ?? new List<User>();
-
-    }
-
 
     public void SaveUsersToDB(User user)
     {
+
         List<User> AllCurrentUsers = ReadAllUsersFromDB();
         int lastId = AllCurrentUsers.Count == 0 ? 0 : AllCurrentUsers.Last().Id;
 
@@ -50,6 +40,21 @@ internal class FileSystem
     }
 
 
+    public List<User> ReadAllUsersFromDB()
+    {
+
+        string json = File.ReadAllText(DBFilePath);
+        List<User> currentUsers = JsonConvert.DeserializeObject<List<User>>(json);
+
+
+        return currentUsers ?? new List<User>();
+
+    }
+
+   
+
+
+
     public void SaveQuestionsToDB(List<Question> questions)
     {
 
@@ -58,9 +63,26 @@ internal class FileSystem
 
     }
 
-    public List<Question> ReadAllQuestionsFromDB()
-    {
 
+    // метод для сохранения введенного вопроса  
+    public void SaveQuestionsToDB(Question question)
+    {
+        List<Question> AllCurrentQuestions = ReadQuestionsFromDB();
+        //int lastNumber = AllCurrentQuestions.Count == 0 ? 0 : AllCurrentQuestions.Last().Number;
+
+        //question.SetNewNumber(lastNumber + 1);
+
+        AllCurrentQuestions.Add(question);
+        string serializedQuestion = JsonConvert.SerializeObject(AllCurrentQuestions);
+        File.WriteAllText(DBFilePath, serializedQuestion);
+
+
+    }
+
+
+    public List<Question> ReadQuestionsFromDB()
+    {
+        
         string json = File.ReadAllText(DBFilePath);
         List<Question> currentQuestions = JsonConvert.DeserializeObject<List<Question>>(json);
 
@@ -69,20 +91,9 @@ internal class FileSystem
 
     }
 
-
-    public void SaveToDB(Question question)
-    {
-        List<Question> AllCurrentQuestions = ReadAllQuestionsFromDB();
-        int lastNumber = AllCurrentQuestions.Count == 0 ? 0 : AllCurrentQuestions.Last().Number;
-
-        question.SetNewNumber(lastNumber + 1);
-
-        AllCurrentQuestions.Add(question);
-        string serializedQuestion = JsonConvert.SerializeObject(AllCurrentQuestions);
-        File.WriteAllText(DBFilePath, serializedQuestion);
-
-
-    }
+    
+    
+    
 
     public void CheckFileIsCreate()
     {
