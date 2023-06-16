@@ -13,3 +13,6 @@
 /Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.pdb
 /Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.genruntimeconfig.cache
 /Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/ref/Geniy_Idiot_ConsoleApp.dll
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/bin/Debug/net7.0/ConsoleTables.dll
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/bin/Debug/net7.0/Newtonsoft.Json.dll
+/Users/alexpronto/Projects/Console-Win-App-Learning/Geniy_Idiot_ConsoleApp/Geniy_Idiot_ConsoleApp/obj/Debug/net7.0/Geniy_Idiot_ConsoleApp.csproj.CopyComplete

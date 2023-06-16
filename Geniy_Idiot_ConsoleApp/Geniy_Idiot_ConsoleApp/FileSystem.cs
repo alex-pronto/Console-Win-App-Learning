@@ -23,6 +23,15 @@ internal class FileSystem
 
     }
 
+    public void SaveToDB(info)
+    {
+
+        string serializedUsers = JsonConvert.SerializeObject(info);
+        File.WriteAllText(DBFilePath, serializedUsers);
+
+    }
+
+
 
     public void SaveUsersToDB(User user)
     {
@@ -38,6 +47,12 @@ internal class FileSystem
 
 
     }
+
+
+    
+
+
+    
 
 
     public List<User> ReadAllUsersFromDB()

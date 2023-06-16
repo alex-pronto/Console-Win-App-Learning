@@ -18,13 +18,13 @@ partial class Program
         private static void Main(string[] args)
         {
 
-            FileSystem fileSystemUser = new FileSystem();
+            var fileSystemUser = new FileSystem();
 
             fileSystemUser.FileDBName = "users_geniyidiot_game";
             fileSystemUser.FileFolderPath = Path.GetTempPath();
             fileSystemUser.DBFilePath = fileSystemUser.FileFolderPath + fileSystemUser.FileDBName;
 
-            FileSystem fileSystemQuestion = new FileSystem();
+            var fileSystemQuestion = new FileSystem();
 
             fileSystemQuestion.FileDBName = "questions_geniyidiot_game";
             fileSystemQuestion.FileFolderPath = Path.GetTempPath();
@@ -35,17 +35,17 @@ partial class Program
             fileSystemUser.CheckFileIsCreate();
             fileSystemQuestion.CheckFileIsCreate();
 
+        
+
+            var userStorage = new UserStorage();
+
+            //var questionStorage = new QuestionStorage();
 
 
-            UserStorage userStorage = new UserStorage();
-
-            QuestionStorage questionStorage = new QuestionStorage();
-
-
-        var allquestions = fileSystemQuestion.ReadQuestionsFromDB();
+            var allquestions = fileSystemQuestion.ReadQuestionsFromDB();
         
             
-
+            
 
             bool isWork = true;
 
@@ -94,8 +94,6 @@ partial class Program
 
                             var questions = fileSystemQuestion.ReadQuestionsFromDB();
 
-
-
                             var countQuestions = questions.Count;
 
                             var countRightAnswers = 0;
@@ -113,6 +111,7 @@ partial class Program
 
                             Console.WriteLine("Введите фамилию");
                             string surname = Console.ReadLine();
+
 
                             var random = new Random();
 
@@ -140,13 +139,12 @@ partial class Program
 
                             }
 
-
-
+                            
 
                             string finalDiagnose = userStorage.CalculateDiagnose(countQuestions, countRightAnswers);
-
-
-                            User newUser = new User(0, name, surname, countRightAnswers, finalDiagnose);
+                            
+                            
+                            var newUser = new User(0, name, surname, countRightAnswers, finalDiagnose);
 
                             fileSystemUser.SaveUsersToDB(newUser);
 
@@ -245,7 +243,7 @@ partial class Program
 
                     case 5:
                        {
-                            allquestions = questionStorage.GetQuestions();
+                            allquestions = QuestionStorage.GetQuestions();
                             fileSystemQuestion.SaveQuestionsToDB(allquestions);
                             break;
                        }
@@ -306,28 +304,7 @@ partial class Program
 
 
 
-        public static DataTable InitUser(FileSystem fileSystemUser)
-        {
-
-            var table = new DataTable();
-
-
-            table.Columns.Add("Id", typeof(int));
-            table.Columns.Add("Name", typeof(string));
-            table.Columns.Add("Surname", typeof(string));
-            table.Columns.Add("Right Answers", typeof(int));
-            table.Columns.Add("Diagnose", typeof(string));
-
-            var allUsers = fileSystemUser.ReadAllUsersFromDB();
-
-
-            foreach (var user in allUsers)
-
-                table.Rows.Add(user.Id, user.Name, user.Surname, user.CountRightAnswers, user.Diagnose);
-
-            return table;
-        }
-
+       
 
 
     static int GetQuestionNumber(int questionsCount)
@@ -432,6 +409,29 @@ partial class Program
         }
 
     }
+
+    public static DataTable InitUser(FileSystem fileSystemUser)
+    {
+
+        var table = new DataTable();
+
+
+        table.Columns.Add("Id", typeof(int));
+        table.Columns.Add("Name", typeof(string));
+        table.Columns.Add("Surname", typeof(string));
+        table.Columns.Add("Right Answers", typeof(int));
+        table.Columns.Add("Diagnose", typeof(string));
+
+        var allUsers = fileSystemUser.ReadAllUsersFromDB();
+
+
+        foreach (var user in allUsers)
+
+            table.Rows.Add(user.Id, user.Name, user.Surname, user.CountRightAnswers, user.Diagnose);
+
+        return table;
+    }
+
 
 
 

@@ -3,9 +3,7 @@
     public List<Question> Questions;
     
    
-
-
-    public List<Question> GetQuestions()
+    public static List<Question> GetQuestions()
 
     {
         var questions = new List<Question>();
